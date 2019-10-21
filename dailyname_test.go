@@ -1,9 +1,13 @@
-package main
+package dailyname
 
 import (
 	"log"
+	"testing"
 )
 
-func main() {
+//------------------------------------------------------------------------------
+
+// TestOneNode testa il
+func TestOneNode(t *testing.T) {
 	log.Println("dailyname package")
 }
