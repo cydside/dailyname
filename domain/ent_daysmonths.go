@@ -1,8 +1,8 @@
-//------------------------------------------------------------------------------
+//______________________________________________________________________________
 
 package domain
 
-//------------------------------------------------------------------------------
+//______________________________________________________________________________
 
 import (
 	// "errors"
@@ -16,7 +16,27 @@ import (
 	"time"
 )
 
-//------------------------------------------------------------------------------
+//______________________________________________________________________________
+
+// DaysNameLay interfaccia per accedere ai nomi dei giorni
+type DaysNameLay interface {
+	Create(obj *DaysName) error
+	Fetch() []DaysName
+	FetchByKey(key string) DaysName
+	EraseByKey(key string) error
+}
+
+//______________________________________________________________________________
+
+// MonthsNameLay interfaccia per accedere ai nomi dei mesi
+type MonthsNameLay interface {
+	Create(obj *MonthsName) error
+	Fetch() []MonthsName
+	FetchByKey(key string) MonthsName
+	EraseByKey(key string) error
+}
+
+//______________________________________________________________________________
 
 // Locale define language codes as in /usr/share/i18n/SUPPORTED
 type Locale string
