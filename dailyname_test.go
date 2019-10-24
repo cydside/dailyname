@@ -3,11 +3,17 @@ package dailyname
 import (
 	"log"
 	"testing"
+
+	"github.com/cydside/dailyname/infrastructure"
 )
 
 //______________________________________________________________________________
 
 // TestOneNode testa il
-func TestOneNode(t *testing.T) {
-	log.Println("dailyname package")
+// go test -v -run ^TestCli$
+func TestCli(t *testing.T) {
+	err := infrastructure.Execute()
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+	}
 }

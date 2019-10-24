@@ -6,11 +6,7 @@ package usecases
 
 // UserReqLay interfaccia
 type UserReqLay interface {
-	Create(obj *UserReq) error
-	Save(key string, obj *UserReq) error
-	Fetch() []UserReq
-	FetchByKey(key string) UserReq
-	EraseByKey(key string) error
+	Create(obj *UserReq) ([]string, error)
 }
 
 //______________________________________________________________________________
