@@ -1,6 +1,6 @@
 //______________________________________________________________________________
 
-package domain
+package dailyname
 
 //______________________________________________________________________________
 
@@ -10,49 +10,56 @@ import (
 
 //______________________________________________________________________________
 
-// DaysNameLay interfaccia per accedere ai nomi dei giorni
-type DaysNameLay interface {
-	Create(obj *DaysName) error
-	Fetch() []DaysName
-	FetchByKey(key string) DaysName
-	EraseByKey(key string) error
+// UserReq descrive gli
+type UserReq struct {
+	Lang      string `json:"lang"`          // Language selected(Italian('it_IT' default) and English('en_US') are pre-loaded).
+	PathSep   string `json:"pathsep"`       // Path separator for the desired OS.
+	DateFrom  string `json:"datefrom"`      // The starting date in format YYYYMMDD(eg.: 2019-11-08 or 2019-11 or 2019) on missing data will be selected the first avaiable. If the final date won't be supplied the last day of the year will be the selected.
+	DateTo    string `json:"dateto"`        // The final datein format YYYYMMDD(eg.: 2020-01-16 or  2020-01 or  2020) on missing data will be selected the last avaiable without crossing year, if the starting date won't be supplied the first day of the year will be the selected.
+	Suffix    string `json:"suffix"`        // Add suffix to day folder's name.
+	Prefix    string `json:"prefix"`        // Add prefix to day folder's name.
+	LoneOrSub bool   `json:"loneorsub"`     // True: A long forlder name per day(eg: 2017-01-22); False: a forlder for the year, subfolders for the months and subfolders for the days(default).
+	Duration  uint16 `json:"duration"`      // Duration in number of the days(1 to 366)
+	DoW       uint8  `json:"dayoftheweek"`  // Day's name added: Monday(long format), Mon(short format)
+	DoM       uint8  `json:"dayofthemonth"` // Month's name added: Jenuary(long format), Jen(short format)
+	DoY       bool   `json:"dayoftheyear"`  // Julian date added: 001 for jenuary first
 }
 
 //______________________________________________________________________________
 
-// MonthsNameLay interfaccia per accedere ai nomi dei mesi
-type MonthsNameLay interface {
-	Create(obj *MonthsName) error
-	Fetch() []MonthsName
-	FetchByKey(key string) MonthsName
-	EraseByKey(key string) error
-}
+// locale define language codes(cat /usr/share/i18n/SUPPORTED)
+type locale string
 
 //______________________________________________________________________________
 
-// Locale define language codes as in /usr/share/i18n/SUPPORTED
-type Locale string
+// nameformat define the format type to use for folder's name building.
+type nameformat uint8
 
-// NameFormat define the format type to use for folder's name building.
-type NameFormat uint8
+//______________________________________________________________________________
 
-// DaysName Define a type
-type DaysName map[Locale]map[NameFormat]map[time.Weekday]string
+// daysname Define a type
+type daysname map[locale]map[nameformat]map[time.Weekday]string
 
-// MonthsName Define a type
-type MonthsName map[Locale]map[NameFormat]map[time.Month]string
+//______________________________________________________________________________
+
+// monthsname Define a type
+type monthsname map[locale]map[nameformat]map[time.Month]string
+
+//______________________________________________________________________________
 
 const (
-	// Short indicates a three-letter day's name abbreviation.
-	Short NameFormat = iota
+	// short indicates a three-letter day's name abbreviation.
+	short nameformat = iota
 
-	// Long indicates a day's name in the original format.
-	Long
+	// long indicates a day's name in the original format.
+	long
 )
 
-var defaultDaysName = DaysName{
+//______________________________________________________________________________
+
+var defaultDaysName = daysname{
 	"en_US": {
-		Short: {
+		short: {
 			time.Sunday:    "Sun",
 			time.Monday:    "Mon",
 			time.Tuesday:   "Tue",
@@ -61,7 +68,7 @@ var defaultDaysName = DaysName{
 			time.Friday:    "Fri",
 			time.Saturday:  "Sat",
 		},
-		Long: {
+		long: {
 			time.Sunday:    "Sunday",
 			time.Monday:    "Monday",
 			time.Tuesday:   "Tuesday",
@@ -72,7 +79,7 @@ var defaultDaysName = DaysName{
 		},
 	},
 	"it_IT": {
-		Short: {
+		short: {
 			time.Sunday:    "Dom",
 			time.Monday:    "Lun",
 			time.Tuesday:   "Mar",
@@ -81,7 +88,7 @@ var defaultDaysName = DaysName{
 			time.Friday:    "Ven",
 			time.Saturday:  "Sab",
 		},
-		Long: {
+		long: {
 			time.Sunday:    "Domenica",
 			time.Monday:    "Lunedì",
 			time.Tuesday:   "Martedì",
@@ -93,9 +100,9 @@ var defaultDaysName = DaysName{
 	},
 }
 
-var defaultMonthsName = MonthsName{
+var defaultMonthsName = monthsname{
 	"en_US": {
-		Short: {
+		short: {
 			time.January:   "Jan",
 			time.February:  "Feb",
 			time.March:     "Mar",
@@ -109,7 +116,7 @@ var defaultMonthsName = MonthsName{
 			time.November:  "Nov",
 			time.December:  "Dec",
 		},
-		Long: {
+		long: {
 			time.January:   "January",
 			time.February:  "February",
 			time.March:     "March",
@@ -125,7 +132,7 @@ var defaultMonthsName = MonthsName{
 		},
 	},
 	"it_IT": {
-		Short: {
+		short: {
 			time.January:   "Gen",
 			time.February:  "Feb",
 			time.March:     "Mar",
@@ -139,7 +146,7 @@ var defaultMonthsName = MonthsName{
 			time.November:  "Nov",
 			time.December:  "Dic",
 		},
-		Long: {
+		long: {
 			time.January:   "Gennaio",
 			time.February:  "Febbraio",
 			time.March:     "Marzo",

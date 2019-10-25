@@ -6,6 +6,7 @@ import (
 	// "log"
 	"fmt"
 
+	"github.com/cydside/dailyname"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "dayfolders",
 		Short: "Creates daily folders for a selectable period of time",
-		Long:  `A CLI that creates daily folders for a selectable period of time`,
+		Long:  `A tool that creates daily folders for a selectable period of time`,
 	}
 )
 
@@ -100,7 +101,16 @@ var languageCmd = &cobra.Command{
 
 //______________________________________________________________________________
 
+var cmds *dailyname.UserReq
+
+//______________________________________________________________________________
+
 func init() {
+	cmds = new(dailyname.UserReq)
+	// languageCmd.PersistentFlags().StringVar(&cmds.Lang, "add", "a", "add a language file")
+
+	rootCmd.PersistentFlags().StringVarP(&cmds.Lang, "lang", "l", "it_IT", "select a language")
+
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(languageCmd)
 }

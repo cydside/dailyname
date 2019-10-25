@@ -1,4 +1,4 @@
-package dailyname
+package dailyname_test
 
 import (
 	"log"
