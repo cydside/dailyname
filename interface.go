@@ -40,7 +40,7 @@ func SetCommands(obj *UserReq) error {
 func validateCommands(obj *UserReq) error {
 	var err error
 
-	if obj.DateFrom, obj.DateTo, err = checkPeriod(obj.DateFrom, obj.DateTo); err != nil {
+	if err = checkPeriod(obj); err != nil {
 		return err
 	}
 
@@ -49,58 +49,90 @@ func validateCommands(obj *UserReq) error {
 
 //______________________________________________________________________________
 
-func checkPeriod(start, end string) (string, string, error) {
+func checkPeriod(obj *UserReq) error {
 	var dateStart, dateEnd time.Time
 	var err error
 
-	if start == "" && end == "" {
-		return "", "", errors.New("No period specified, bye!")
-	}
+	start := obj.DateFrom
+	end := obj.DateTo
 
-	m := "Wrong start date, bye!"
+	ms := "Wrong start date, bye!"
+	me := "No valid end date, bye!"
+
+	if start == "" {
+		return errors.New(ms)
+	}
 
 	switch len(start) {
 	case 10:
 		if dateStart, err = checkStringDate(start); err != nil {
-			return "", "", errors.Wrap(err, m)
+			return errors.Wrap(err, ms)
+		}
+
+		if len(end) == 0 {
+			if obj.Duration > 0 && obj.Duration <= 366 {
+				dateEnd = dateStart.AddDate(0, 0, obj.Duration)
+			} else {
+				return errors.New(me)
+			}
+		} else if len(end) == 7 {
+			if dateEnd, err = checkStringDate(end + "-01"); err != nil {
+				return errors.Wrap(err, me)
+			}
+			_, dateEnd = monthInterval(dateEnd)
+		} else if len(end) == 10 {
+			if dateEnd, err = checkStringDate(end); err != nil {
+				return errors.Wrap(err, me)
+			}
+		} else {
+			return errors.New(me)
 		}
 	case 7:
 		if dateStart, err = checkStringDate(start + "-01"); err != nil {
-			return "", "", errors.Wrap(err, m)
+			return errors.Wrap(err, ms)
+		}
+
+		if len(end) == 0 {
+			_, dateEnd = monthInterval(dateStart)
+		} else if len(end) == 7 {
+			if dateEnd, err = checkStringDate(end + "-01"); err != nil {
+				return errors.Wrap(err, me)
+			}
+			_, dateEnd = monthInterval(dateEnd)
+		} else if len(end) == 10 {
+			if dateEnd, err = checkStringDate(end); err != nil {
+				return errors.Wrap(err, me)
+			}
+		} else {
+			return errors.New(me)
 		}
 	case 4:
 		if dateStart, err = checkStringDate(start + "-01-01"); err != nil {
-			return "", "", errors.Wrap(err, m)
+			return errors.Wrap(err, ms)
+		}
+
+		if dateEnd, err = checkStringDate(start + "-12-31"); err != nil {
+			return errors.Wrap(err, ms)
 		}
 	default:
-		return "", "", errors.New(m)
+		return errors.New(ms)
 	}
 
-	m = "Wrong end date, bye!"
-
-	switch len(end) {
-	case 10:
-		if dateEnd, err = checkStringDate(end); err != nil {
-			return "", "", errors.Wrap(err, m)
-		}
-	case 7:
-		if dateEnd, err = checkStringDate(end + "-01"); err != nil {
-			return "", "", errors.Wrap(err, m)
-		}
-	case 0:
-		if dateEnd, err = checkStringDate(start[:4] + "-12-31"); err != nil {
-			return "", "", errors.Wrap(err, m)
-		}
-	default:
-		return "", "", errors.New(m)
+	if dateEnd.Before(dateStart) {
+		td := dateEnd
+		dateEnd = dateStart
+		dateStart = td
 	}
 
 	de := dateStart.AddDate(1, 0, 0)
 	if de.Before(dateEnd) {
-		return "", "", errors.New("No more than a year is allowed, bye!")
+		return errors.New("No more than a year is allowed, bye!")
 	}
 
-	return dateStart.Format("2006-01-02"), dateEnd.Format("2006-01-02"), nil
+	obj.DateFrom = dateStart.Format("2006-01-02")
+	obj.DateTo = dateEnd.Format("2006-01-02")
+
+	return nil
 }
 
 //______________________________________________________________________________
@@ -110,3 +142,11 @@ func checkStringDate(sDate string) (time.Time, error) {
 }
 
 //______________________________________________________________________________
+
+func monthInterval(tDate time.Time) (firstOfMonth, lastOfMonth time.Time) {
+	currentYear, currentMonth, _ := tDate.Date()
+	firstOfMonth = time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, time.UTC)
+	lastOfMonth = firstOfMonth.AddDate(0, 1, -1)
+
+	return
+}
