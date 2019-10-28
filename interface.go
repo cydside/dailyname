@@ -119,9 +119,7 @@ func checkPeriod(obj *UserReq) error {
 	}
 
 	if dateEnd.Before(dateStart) {
-		td := dateEnd
-		dateEnd = dateStart
-		dateStart = td
+		return errors.New("Starting date is after end date, bye!")
 	}
 
 	de := dateStart.AddDate(1, 0, 0)

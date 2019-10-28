@@ -19,9 +19,9 @@ type UserReq struct {
 	Suffix    string `json:"suffix"`        // Add suffix to day folder's name.
 	Prefix    string `json:"prefix"`        // Add prefix to day folder's name.
 	LoneOrSub bool   `json:"loneorsub"`     // True: A long forlder name per day(eg: 2017-01-22); False: a forlder for the year, subfolders for the months and subfolders for the days(default).
-	Duration  uint16 `json:"duration"`      // Duration in number of the days(1 to 366)
-	DoW       uint8  `json:"dayoftheweek"`  // Day's name added: Monday(long format), Mon(short format)
-	DoM       uint8  `json:"dayofthemonth"` // Month's name added: Jenuary(long format), Jen(short format)
+	Duration  int    `json:"duration"`      // Duration in number of the days(1 to 366)
+	DoW       int    `json:"dayoftheweek"`  // Day's name added: Monday(long format), Mon(short format)
+	DoM       int    `json:"dayofthemonth"` // Month's name added: Jenuary(long format), Jen(short format)
 	DoY       bool   `json:"dayoftheyear"`  // Julian date added: 001 for jenuary first
 }
 
