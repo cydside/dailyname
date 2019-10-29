@@ -20,6 +20,7 @@ type UserReq struct {
 	Prefix    string `json:"prefix"`        // Add prefix to day folder's name.
 	LoneOrSub bool   `json:"loneorsub"`     // True: A long forlder name per day(eg: 2017-01-22); False: a forlder for the year, subfolders for the months and subfolders for the days(default).
 	Duration  int    `json:"duration"`      // Duration in number of the days(1 to 366)
+	Content   string `json:"content"`       // Last names to add to daily name separated by comma
 	DoW       int    `json:"dayoftheweek"`  // Day's name added: Monday(long format), Mon(short format)
 	DoM       int    `json:"dayofthemonth"` // Month's name added: Jenuary(long format), Jen(short format)
 	DoY       bool   `json:"dayoftheyear"`  // Julian date added: 001 for jenuary first
@@ -33,7 +34,7 @@ type locale string
 //______________________________________________________________________________
 
 // nameformat define the format type to use for folder's name building.
-type nameformat uint8
+type nameformat int
 
 //______________________________________________________________________________
 
@@ -54,6 +55,10 @@ const (
 	// long indicates a day's name in the original format.
 	long
 )
+
+//______________________________________________________________________________
+
+var dateStart, dateEnd time.Time
 
 //______________________________________________________________________________
 

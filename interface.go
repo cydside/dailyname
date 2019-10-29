@@ -5,6 +5,7 @@ package dailyname
 //______________________________________________________________________________
 
 import (
+	"os"
 	"time"
 
 	"github.com/pkg/errors"
@@ -12,8 +13,26 @@ import (
 
 //______________________________________________________________________________
 
+// GetDailyNames ritorna un array di stringhe con ogni singolo nome giornaliero
+func GetDailyNames(obj *UserReq) ([]string, error) {
+	var err error
+	var arrstr []string
+
+	if err = setCommands(obj); err != nil {
+		return nil, err
+	}
+
+	if arrstr, err = createDailyNames(obj); err != nil {
+		return nil, err
+	}
+
+	return arrstr, err
+}
+
+//______________________________________________________________________________
+
 // SetCommands imposta le opzioni disponibili per la crazione dei nomi
-func SetCommands(obj *UserReq) error {
+func setCommands(obj *UserReq) error {
 	var err error
 
 	err = validateCommands(obj)
@@ -44,7 +63,35 @@ func validateCommands(obj *UserReq) error {
 		return err
 	}
 
+	if err = checkLang(obj); err != nil {
+		return err
+	}
+
+	if err = checkSubFolder(obj); err != nil {
+		return err
+	}
+
 	return err
+}
+
+//______________________________________________________________________________
+
+func checkLang(obj *UserReq) error {
+	if _, ok := defaultDaysName[locale(obj.Lang)]; !ok {
+		return errors.New("Language not defined")
+	}
+
+	return nil
+}
+
+//______________________________________________________________________________
+
+func checkSubFolder(obj *UserReq) error {
+	if obj.PathSep == "" {
+		obj.PathSep = string(os.PathSeparator)
+	}
+
+	return nil
 }
 
 //______________________________________________________________________________
@@ -56,8 +103,8 @@ func checkPeriod(obj *UserReq) error {
 	start := obj.DateFrom
 	end := obj.DateTo
 
-	ms := "Wrong start date, bye!"
-	me := "No valid end date, bye!"
+	ms := "Wrong start date, bye"
+	me := "No valid end date, bye"
 
 	if start == "" {
 		return errors.New(ms)
@@ -119,12 +166,12 @@ func checkPeriod(obj *UserReq) error {
 	}
 
 	if dateEnd.Before(dateStart) {
-		return errors.New("Starting date is after end date, bye!")
+		return errors.New("Starting date is after end date, bye")
 	}
 
 	de := dateStart.AddDate(1, 0, 0)
 	if de.Before(dateEnd) {
-		return errors.New("No more than a year is allowed, bye!")
+		return errors.New("No more than a year is allowed, bye")
 	}
 
 	obj.DateFrom = dateStart.Format("2006-01-02")
