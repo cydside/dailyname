@@ -16,28 +16,35 @@ func TestCli(t *testing.T) {
 	var arrstr []string
 	var ur dailyname.UserReq
 
-	// ur = dailyname.UserReq{
-	// 	Lang:     "it_IT",
-	// 	DateFrom: "2019",
-	// 	DateTo:   "",
-	// }
+	ur = dailyname.UserReq{
+		DateFrom: "2019",
+		DateTo:   "",
+	}
 
-	// arrstr, err = dailyname.GetDailyNames(&ur)
-	// if err != nil {
-	// 	log.Printf("%s", err.Error())
-	// }
+	arrstr, err = dailyname.GetDailyNames(&ur)
+	if err != nil {
+		t.Errorf("Error(): %s", err.Error())
+	}
 
-	// log.Printf("%v", ur)
-	// log.Printf("%v", arrstr)
+	log.Printf("%v", ur)
+	log.Printf("%v", arrstr)
 
 	ur = dailyname.UserReq{
 		Lang:      "it_IT",
-		DateFrom:  "2019-02",
+		DateFrom:  "2019-05",
 		DateTo:    "",
 		LoneOrSub: true,
-		DoW:       2,
+		DoW:       -1,
 		Content:   "RX,TX",
 	}
+
+	arrstr, err = dailyname.GetDailyNames(&ur)
+	if err != nil {
+		t.Errorf("Error(): %s", err.Error())
+	}
+
+	log.Printf("%v", ur)
+	log.Printf("%v", arrstr)
 
 	ur = dailyname.UserReq{
 		Lang:      "it_IT",
@@ -50,55 +57,51 @@ func TestCli(t *testing.T) {
 
 	arrstr, err = dailyname.GetDailyNames(&ur)
 	if err != nil {
-		log.Printf("%s", err.Error())
+		t.Errorf("Error(): %s", err.Error())
 	}
 
 	log.Printf("%v", ur)
 	log.Printf("%v", arrstr)
 
-	// ur = &dailyname.UserReq{
-	// 	DateFrom: "2020-02",
-	// 	DateTo:   "",
-	// }
+	ur = dailyname.UserReq{
+		Lang:     "it_IT",
+		DateFrom: "2020-02",
+		DateTo:   "2020-10-03",
+	}
 
-	// dailyname.GetDailyNames(ur)
+	arrstr, err = dailyname.GetDailyNames(&ur)
+	if err != nil {
+		t.Errorf("Error(): %s", err.Error())
+	}
 
-	// log.Printf("%v", ur)
+	log.Printf("%v", ur)
+	log.Printf("%v", arrstr)
 
-	// ur = &dailyname.UserReq{
-	// 	DateFrom: "2020-02",
-	// 	DateTo:   "2020-10-03",
-	// }
+	ur = dailyname.UserReq{
+		Lang:     "it_IT",
+		DateFrom: "2020-02-10",
+		DateTo:   "2020-02-15",
+	}
 
-	// dailyname.GetDailyNames(ur)
+	arrstr, err = dailyname.GetDailyNames(&ur)
+	if err != nil {
+		t.Errorf("Error(): %s", err.Error())
+	}
 
-	// log.Printf("%v", ur)
+	log.Printf("%v", ur)
+	log.Printf("%v", arrstr)
 
-	// ur = &dailyname.UserReq{
-	// 	DateFrom: "2020-02-10",
-	// 	DateTo:   "2020-02-15",
-	// }
+	ur = dailyname.UserReq{
+		Lang:     "it_IT",
+		DateFrom: "2020-03",
+		DateTo:   "2020-02",
+	}
 
-	// err = dailyname.GetDailyNames(ur)
-	// if err != nil {
-	// 	log.Printf("%s", err.Error())
-	// }
+	arrstr, err = dailyname.GetDailyNames(&ur)
+	if err == nil {
+		t.Errorf("Error(): %s", "Swap the dates!")
+	}
 
-	// log.Printf("%v", ur)
-
-	// ur = &dailyname.UserReq{
-	// 	DateFrom: "2020-03",
-	// 	DateTo:   "2020-02",
-	// }
-
-	// err = dailyname.GetDailyNames(ur)
-	// if err != nil {
-	// 	log.Printf("%s", err.Error())
-	// }
-
-	// log.Printf("%v", ur)
-	// err := infrastructure.Execute()
-	// if err != nil {
-	// 	log.Printf("ERROR: %s\n", err.Error())
-	// }
+	log.Printf("%v", ur)
+	log.Printf("%v", arrstr)
 }
