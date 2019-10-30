@@ -108,7 +108,7 @@ func checkPeriod(obj *UserReq) error {
 
 		if len(end) == 0 {
 			if obj.Duration > 0 && obj.Duration <= 366 {
-				dateEnd = dateStart.AddDate(0, 0, obj.Duration)
+				dateEnd = dateStart.AddDate(0, 0, obj.Duration-1)
 			} else {
 				return errors.New(me)
 			}
